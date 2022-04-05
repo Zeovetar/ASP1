@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 public class ValuesHolder
 {
-    public List<string> Values { get; } = new List<string>();
+    public List<string> Values { get; set; } = new List<string>();
 	public ValuesHolder()
 	{
 	}
