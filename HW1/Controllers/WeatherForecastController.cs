@@ -1,6 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using System;
+using System.Collections.Generic;
 using System.Linq;
-namespace MetricsManager.Controllers
+
+namespace HW1.Controllers
 {
     [Route("[controller]")]
     [ApiController]
@@ -11,33 +14,61 @@ namespace MetricsManager.Controllers
         {
             _holder = holder;
         }
-        [HttpPost("create")]
-        public IActionResult Create([FromQuery] string input)
+
+        public string Get()
         {
-            _holder.Add(input);
+            return "hello!";
+        }
+
+
+        [HttpPost("create")]
+        public IActionResult Create([FromQuery] DateTime date, [FromQuery] int tempC, [FromQuery] string summary)
+        {
+
+            WeatherForecast _input = new WeatherForecast();
+            _input.Date = date;
+            _input.TemperatureC = tempC;
+            _input.Summary = summary;
+            _holder.Add(_input);
             return Ok();
         }
         [HttpGet("read")]
-        public IActionResult Read()
+        public IActionResult Read([FromBody] DelData summary)
         {
-            return Ok(_holder.Get());
+            List<int> temperature = new();
+
+            foreach (WeatherForecast iter in _holder.Values)
+            {
+                if (iter.Date >= summary.firstDate && iter.Date <= summary.secondDate)
+                {
+                    temperature.Add(iter.TemperatureC);
+                }
+            }
+
+            return Ok(temperature);
         }
         [HttpPut("update")]
-        public IActionResult Update([FromQuery] string stringsToUpdate,
-        [FromQuery] string newValue)
+        public IActionResult Update([FromBody] AllData summary)
         {
-            for (int i = 0; i < _holder.Values.Count; i++)
+            foreach (WeatherForecast iter in _holder.Values)
             {
-                if (_holder.Values[i] == stringsToUpdate)
-                    _holder.Values[i] = newValue;
+                if (iter.Date == summary.dateToUpdate)
+                {
+                    iter.TemperatureC = summary.newTemperature;
+                }
             }
             return Ok();
         }
         [HttpDelete("delete")]
-        public IActionResult Delete([FromQuery] string stringsToDelete)
+        public IActionResult Delete([FromBody] DelData summary)
         {
-            _holder.Values = _holder.Values.Where(w => w !=
-            stringsToDelete).ToList();
+            foreach (WeatherForecast iter in _holder.Values)
+            {
+                if (iter.Date >= summary.firstDate && iter.Date <= summary.secondDate)
+                {
+                    iter.TemperatureC = int.MaxValue;
+                }
+            }
             return Ok();
         }
     }
