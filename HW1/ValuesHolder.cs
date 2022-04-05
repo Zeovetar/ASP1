@@ -3,18 +3,18 @@ using System.Collections.Generic;
 
 public class ValuesHolder
 {
-    public List<string> Values { get; set; }
+    public List<string> Values { get; } = new List<string>();
 	public ValuesHolder()
 	{
 	}
 
     internal void Add(string input)
     {
-        throw new NotImplementedException();
+        Values.Add(input);
     }
 
     internal object Get()
     {
-        throw new NotImplementedException();
+        return Values[0];
     }
 }

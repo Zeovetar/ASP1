@@ -1,42 +1,45 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
-
-namespace HW1.Controllers
+namespace MetricsManager.Controllers
 {
-    [ApiController]
     [Route("[controller]")]
+    [ApiController]
     public class WeatherForecastController : ControllerBase
     {
-        private static readonly string[] Summaries = new[]
+        private readonly ValuesHolder _holder;
+        public WeatherForecastController(ValuesHolder holder)
         {
-            "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy",
-            "Hot", "Sweltering", "Scorching"
-        };
-        private readonly ILogger<WeatherForecastController> _logger;
-        public WeatherForecastController(ILogger<WeatherForecastController>logger)
-        {
-            _logger = logger;
+            _holder = holder;
         }
-        [HttpGet]
-        public IEnumerable<WeatherForecast> Get()
+        [HttpPost("create")]
+        public IActionResult Create([FromQuery] string input)
         {
-            var rng = new Random();
-            return Enumerable.Range(1, 5).Select(index => new WeatherForecast
+            _holder.Add(input);
+            return Ok();
+        }
+        [HttpGet("read")]
+        public IActionResult Read()
+        {
+            return Ok(_holder.Get());
+        }
+        [HttpPut("update")]
+        public IActionResult Update([FromQuery] string stringsToUpdate,
+        [FromQuery] string newValue)
+        {
+            for (int i = 0; i < _holder.Values.Count; i++)
             {
-                Date = DateTime.Now.AddDays(index),
-                TemperatureC = rng.Next(-20, 55),
-                Summary = Summaries[rng.Next(Summaries.Length)]
-            })
-            .ToArray();
+                if (_holder.Values[i] == stringsToUpdate)
+                    _holder.Values[i] = newValue;
+            }
+            return Ok();
         }
-        [HttpGet("hello")]
-        public string Hello()
+        [HttpDelete("delete")]
+        public IActionResult Delete([FromQuery] string stringsToDelete)
         {
-            return "Hello!";
+            _holder.Values = _holder.Values.Where(w => w !=
+            stringsToDelete).ToList();
+            return Ok();
         }
     }
 }
+
