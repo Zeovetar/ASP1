@@ -1,7 +1,10 @@
 ﻿using System;
 
-public class AgentInfo
+namespace MetricsManager.Controllers
 {
-    public int AgentId { get; }
-    public Uri AgentAddress { get; }
+    public class AgentInfo
+    {
+        public int AgentId { get; }
+        public Uri AgentAddress { get; }
+    }
 }

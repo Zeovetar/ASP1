@@ -10,7 +10,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace HW1
+namespace MetricsManager.Controllers
+
 {
     public class Startup
     {
@@ -24,7 +25,7 @@ namespace HW1
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddSingleton<ValuesHolder>();
+            services.AddSingleton<AgentsHolder>();
             services.AddControllers();
         }
 

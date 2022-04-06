@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace HW1
+namespace MetricsManager.Controllers
 {
     public class Program
     {
