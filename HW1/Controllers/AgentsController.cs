@@ -9,6 +9,9 @@ namespace MetricsManager.Controllers
     public class AgentsController : ControllerBase
     {
         private readonly AgentsHolder _holder;
+//        public AgentsController()
+//        {
+//        }
         public AgentsController(AgentsHolder holder)
         {
             _holder = holder;
