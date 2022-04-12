@@ -22,7 +22,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\HW1\HW1.csproj" />
+    <ProjectReference Include="..\HW1\MetricController.csproj" />
   </ItemGroup>
 
 </Project>

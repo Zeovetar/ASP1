@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Mvc;
+п»їusing Microsoft.AspNetCore.Mvc;
 using System.Data.SQLite;
 namespace MetricsAgent.Controllers
 {
@@ -22,63 +22,66 @@ namespace MetricsAgent.Controllers
         [HttpGet("sql-read-write-test")]
         public IActionResult TryToInsertAndRead()
         {
-            // Создаём строку подключения в виде базы данных в оперативной памяти
-            string connectionString = "Data Source=:memory:";
-            // Создаём соединение с базой данных
+            // РЎРѕР·РґР°С‘Рј СЃС‚СЂРѕРєСѓ РїРѕРґРєР»СЋС‡РµРЅРёСЏ РІ РІРёРґРµ Р±Р°Р·С‹ РґР°РЅРЅС‹С… РІ РѕРїРµСЂР°С‚РёРІРЅРѕР№РїР°РјСЏС‚Рё
+string connectionString = "Data Source=:memory:";
+            // РЎРѕР·РґР°С‘Рј СЃРѕРµРґРёРЅРµРЅРёРµ СЃ Р±Р°Р·РѕР№ РґР°РЅРЅС‹С…
             using (var connection = new SQLiteConnection(connectionString))
             {
-                // Открываем соединение
+                // РћС‚РєСЂС‹РІР°РµРј СЃРѕРµРґРёРЅРµРЅРёРµ
                 connection.Open();
-                // Создаём объект, через который будут выполняться команды к базе данных
-                using (var command = new SQLiteCommand(connection))
+                // РЎРѕР·РґР°С‘Рј РѕР±СЉРµРєС‚, С‡РµСЂРµР· РєРѕС‚РѕСЂС‹Р№ Р±СѓРґСѓС‚ РІС‹РїРѕР»РЅСЏС‚СЊСЃСЏ РєРѕРјР°РЅРґС‹ РєР±Р°Р·Рµ РґР°РЅРЅС‹С…
+using (var command = new SQLiteCommand(connection))
                 {
-                    // Задаём новый текст команды для выполнения
-                    // Удаляем таблицу с метриками, если она есть в базе данных
-                    command.CommandText = "DROP TABLE IF EXISTS cpumetrics";
-                    // Отправляем запрос в базу данных
+                    // Р—Р°РґР°С‘Рј РЅРѕРІС‹Р№ С‚РµРєСЃС‚ РєРѕРјР°РЅРґС‹ РґР»СЏ РІС‹РїРѕР»РЅРµРЅРёСЏ
+                    // РЈРґР°Р»СЏРµРј С‚Р°Р±Р»РёС†Сѓ СЃ РјРµС‚СЂРёРєР°РјРё, РµСЃР»Рё РѕРЅР° РµСЃС‚СЊ РІ Р±Р°Р·РµРґР°РЅРЅС‹С…
+command.CommandText = "DROP TABLE IF EXISTS cpumetrics";
+                    // РћС‚РїСЂР°РІР»СЏРµРј Р·Р°РїСЂРѕСЃ РІ Р±Р°Р·Сѓ РґР°РЅРЅС‹С…
                     command.ExecuteNonQuery();
-                    // Создаём таблицу с метриками
-                    command.CommandText = @"CREATE TABLE cpumetrics(id INTEGER PRIMARY KEY, value INT, time INT)";
+                    // РЎРѕР·РґР°С‘Рј С‚Р°Р±Р»РёС†Сѓ СЃ РјРµС‚СЂРёРєР°РјРё
+                    command.CommandText = @"CREATE TABLE cpumetrics(id INTEGER
+PRIMARY KEY,
+value INT, time INT)";
                     command.ExecuteNonQuery();
-                    // Создаём запрос на вставку данных
+                    // РЎРѕР·РґР°С‘Рј Р·Р°РїСЂРѕСЃ РЅР° РІСЃС‚Р°РІРєСѓ РґР°РЅРЅС‹С…
                     command.CommandText = "INSERT INTO cpumetrics(value, time)VALUES(10, 1)";
-                    command.ExecuteNonQuery();
+command.ExecuteNonQuery();
                     command.CommandText = "INSERT INTO cpumetrics(value, time)VALUES(50, 2)";
-                    command.ExecuteNonQuery();
+command.ExecuteNonQuery();
                     command.CommandText = "INSERT INTO cpumetrics(value, time)VALUES(75, 4)";
-                    command.ExecuteNonQuery();
+command.ExecuteNonQuery();
                     command.CommandText = "INSERT INTO cpumetrics(value, time)VALUES(90, 5)";
-                    command.ExecuteNonQuery();
-                    // Создаём строку для выборки данных из базы
-                    // LIMIT 3 обозначает, что мы достанем только 3 записи
+command.ExecuteNonQuery();
+                    // РЎРѕР·РґР°С‘Рј СЃС‚СЂРѕРєСѓ РґР»СЏ РІС‹Р±РѕСЂРєРё РґР°РЅРЅС‹С… РёР· Р±Р°Р·С‹
+                    // LIMIT 3 РѕР±РѕР·РЅР°С‡Р°РµС‚, С‡С‚Рѕ РјС‹ РґРѕСЃС‚Р°РЅРµРј С‚РѕР»СЊРєРѕ 3 Р·Р°РїРёСЃРё
                     string readQuery = "SELECT * FROM cpumetrics LIMIT 3";
-                    // Создаём массив, в который запишем объекты с данными из базы данных
-                    var returnArray = new CpuMetric[3];
-                    // Изменяем текст команды на наш запрос чтения
+                    // РЎРѕР·РґР°С‘Рј РјР°СЃСЃРёРІ, РІ РєРѕС‚РѕСЂС‹Р№ Р·Р°РїРёС€РµРј РѕР±СЉРµРєС‚С‹ СЃ РґР°РЅРЅС‹РјРё РёР·Р±Р°Р·С‹ РґР°РЅРЅС‹С…
+var returnArray = new CpuMetric[3];
+                    // РР·РјРµРЅСЏРµРј С‚РµРєСЃС‚ РєРѕРјР°РЅРґС‹ РЅР° РЅР°С€ Р·Р°РїСЂРѕСЃ С‡С‚РµРЅРёСЏ
                     command.CommandText = readQuery;
-                    // Создаём читалку из базы данных
+                    // РЎРѕР·РґР°С‘Рј С‡РёС‚Р°Р»РєСѓ РёР· Р±Р°Р·С‹ РґР°РЅРЅС‹С…
                     using (SQLiteDataReader reader = command.ExecuteReader())
                     {
-                        // Счётчик, чтобы записать объект в правильное место в массиве
+                        // РЎС‡С‘С‚С‡РёРє, С‡С‚РѕР±С‹ Р·Р°РїРёСЃР°С‚СЊ РѕР±СЉРµРєС‚ РІ РїСЂР°РІРёР»СЊРЅРѕРµ РјРµСЃС‚Рѕ РІРјР°СЃСЃРёРІРµ
                         var counter = 0;
-                        // Цикл будет выполняться до тех пор, пока есть что читать из базы данных
-                        while (reader.Read())
+                        // Р¦РёРєР» Р±СѓРґРµС‚ РІС‹РїРѕР»РЅСЏС‚СЊСЃСЏ РґРѕ С‚РµС… РїРѕСЂ, РїРѕРєР° РµСЃС‚СЊ С‡С‚РѕС‡РёС‚Р°С‚СЊ РёР· Р±Р°Р·С‹ РґР°РЅРЅС‹С…
+                    while (reader.Read())
                         {
-                            // Создаём объект и записываем его в массив
+                            // РЎРѕР·РґР°С‘Рј РѕР±СЉРµРєС‚ Рё Р·Р°РїРёСЃС‹РІР°РµРј РµРіРѕ РІ РјР°СЃСЃРёРІ
                             returnArray[counter] = new CpuMetric
                             {
-                                Id = reader.GetInt32(0), // Читаем данные, полученные из базы данных
-                                Value = reader.GetInt32(1), // преобразуя к целочисленному типу
-                                Time = reader.GetInt64(2)
+                                Id = reader.GetInt32(0), // Р§РёС‚Р°РµРј РґР°РЅРЅС‹Рµ,РїРѕР»СѓС‡РµРЅРЅС‹Рµ РёР· Р±Р°Р·С‹ РґР°РЅРЅС‹С…
+                            Value = reader.GetInt32(1), // РїСЂРµРѕР±СЂР°Р·СѓСЏ РєС†РµР»РѕС‡РёСЃР»РµРЅРЅРѕРјСѓ С‚РёРїСѓ
+                            Time = reader.GetInt64(2)
                             };
-                            // Увеличиваем значение счётчика
+                            // РЈРІРµР»РёС‡РёРІР°РµРј Р·РЅР°С‡РµРЅРёРµ СЃС‡С‘С‚С‡РёРєР°
                             counter++;
                         }
                     }
-                    // Оборачиваем массив с данными в объект ответа и возвращаем пользователю
-                    return Ok(returnArray);
+                    // РћР±РѕСЂР°С‡РёРІР°РµРј РјР°СЃСЃРёРІ СЃ РґР°РЅРЅС‹РјРё РІ РѕР±СЉРµРєС‚ РѕС‚РІРµС‚Р° РёРІРѕР·РІСЂР°С‰Р°РµРј РїРѕР»СЊР·РѕРІР°С‚РµР»СЋ
+return Ok(returnArray);
                 }
             }
         }
+
     }
 }

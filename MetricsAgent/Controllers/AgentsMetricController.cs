@@ -1,45 +1,48 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using MetricsAgent.DAL;
+//using MetricsAgent.Models;
+using MetricsAgent.Requests;
+using MetricsAgent.Responses;
 using Microsoft.AspNetCore.Mvc;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace MetricsManager.Controllers
+namespace MetricsAgent.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class MetricsController : ControllerBase
+    public class CpuMetricsController : ControllerBase
     {
-        [HttpGet("cpu/from/{fromTime}/to/{toTime}")]
-        public IActionResult GetCpuMetrics([FromRoute] TimeSpan 
-            fromTime, [FromRoute] TimeSpan toTime)
+        private ICpuMetricsRepository repository;
+        public CpuMetricsController(ICpuMetricsRepository repository)
         {
+            this.repository = repository;
+        }
+        [HttpPost("create")]
+        public IActionResult Create([FromBody] CpuMetricCreateRequest request)
+        {
+            repository.Create(new CpuMetric
+            {
+                Time = request.Time,
+                Value = request.Value
+            });
             return Ok();
         }
-        [HttpGet("dotnet/errors-count/from/{fromTime}/to/{toTime}")]
-        public IActionResult GetDotnetMetrics([FromRoute] TimeSpan 
-            fromTime, [FromRoute] TimeSpan toTime)
+        [HttpGet("all")]
+        public IActionResult GetAll()
         {
-            return Ok();
-        }
-        [HttpGet("network/from/{fromTime}/to/{toTime}")]
-        public IActionResult GetNetworkMetrics([FromRoute] TimeSpan
-            fromTime, [FromRoute] TimeSpan toTime)
-        {
-            return Ok();
-        }
-        [HttpGet("hdd/left/from/{fromTime}/to/{toTime}")]
-        public IActionResult GetHDDMetrics([FromRoute] TimeSpan 
-            fromTime, [FromRoute] TimeSpan toTime)
-        {
-            return Ok();
-        }
-        [HttpGet("ram/available/from/{fromTime}/to/{toTime}")]
-        public IActionResult GetRAMMetrics([FromRoute] TimeSpan
-            fromTime, [FromRoute] TimeSpan toTime)
-        {
-            return Ok();
+            var metrics = repository.GetAll();
+            var response = new AllCpuMetricsResponse()
+            {
+                Metrics = new List<CpuMetricDto>()
+            };
+            foreach (var metric in metrics)
+            {
+                response.Metrics.Add(new CpuMetricDto
+                {
+                    Time = metric.Time,
+                    Value = metric.Value,
+                    Id = metric.Id
+                });
+            }
+            return Ok(response);
         }
     }
 }
