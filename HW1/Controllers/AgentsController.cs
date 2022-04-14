@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
+using Microsoft.Extensions.Logging;
 
 namespace MetricsManager.Controllers
 {
@@ -8,6 +9,13 @@ namespace MetricsManager.Controllers
     [ApiController]
     public class AgentsController : ControllerBase
     {
+        private readonly ILogger<CpuMetricsController> _logger;
+        public AgentsController(ILogger<CpuMetricsController> logger)
+        {
+            _logger = logger;
+            
+        }
+
         private readonly AgentsHolder _holder;
 //        public AgentsController()
 //        {
@@ -21,6 +29,7 @@ namespace MetricsManager.Controllers
         public IActionResult RegisterAgent([FromBody] AgentInfo agentInfo)
         {
             _holder.Add(agentInfo);
+            _logger.LogInformation($"AgentController: register");
             return Ok();
         }
 
@@ -32,16 +41,19 @@ namespace MetricsManager.Controllers
             {
                     agents.Add(iter.AgentId);
             }
+            _logger.LogInformation($"AgentController: registered");
             return Ok(agents);
         }
         [HttpPut("enable/{agentId}")]
         public IActionResult EnableAgentById([FromRoute] int agentId)
         {
+            _logger.LogInformation($"AgentController: enable/{agentId}");
             return Ok();
         }
         [HttpPut("disable/{agentId}")]
         public IActionResult DisableAgentById([FromRoute] int agentId)
         {
+            _logger.LogInformation($"AgentController: disable/{agentId}");
             return Ok();
         }
     }

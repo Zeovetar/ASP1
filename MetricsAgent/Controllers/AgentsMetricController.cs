@@ -4,12 +4,21 @@ using MetricsAgent.Requests;
 using MetricsAgent.Responses;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
+using Microsoft.Extensions.Logging;
+
 namespace MetricsAgent.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
     public class CpuMetricsController : ControllerBase
     {
+        private readonly ILogger<CpuMetricsController> _logger;
+
+        public CpuMetricsController(ILogger<CpuMetricsController> logger)
+        {
+            _logger = logger;
+        }
+
         private ICpuMetricsRepository repository;
         public CpuMetricsController(ICpuMetricsRepository repository)
         {
@@ -23,6 +32,7 @@ namespace MetricsAgent.Controllers
                 Time = request.Time,
                 Value = request.Value
             });
+            _logger.LogInformation($"AgentsController: api/cpumetrics/create");
             return Ok();
         }
         [HttpGet("all")]
@@ -42,6 +52,7 @@ namespace MetricsAgent.Controllers
                     Id = metric.Id
                 });
             }
+            _logger.LogInformation($"AgentsController: api/cpumetrics/all");
             return Ok(response);
         }
     }

@@ -1,11 +1,20 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.Data.SQLite;
+using Microsoft.Extensions.Logging;
+
 namespace MetricsAgent.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
     public class CpuMetricsController : ControllerBase
     {
+        private readonly ILogger<CpuMetricsController> _logger;
+
+        public CpuMetricsController(ILogger<CpuMetricsController> logger)
+        {
+            _logger = logger;
+        }
+
         [HttpGet("sql-test")]
         public IActionResult TryToSqlLite()
         {
@@ -16,6 +25,7 @@ namespace MetricsAgent.Controllers
                 con.Open();
                 using var cmd = new SQLiteCommand(stm, con);
                 string version = cmd.ExecuteScalar().ToString();
+                _logger.LogInformation($"SQLController: api/cpumetrics/sql-test");
                 return Ok(version);
             }
         }
@@ -78,7 +88,8 @@ var returnArray = new CpuMetric[3];
                         }
                     }
                     // Оборачиваем массив с данными в объект ответа ивозвращаем пользователю
-return Ok(returnArray);
+                    _logger.LogInformation($"SQLController: api/cpumetrics/sql-read-write-test");
+                    return Ok(returnArray);
                 }
             }
         }

@@ -21,14 +21,14 @@ namespace MetricsManager.Controllers
         public IActionResult GetMetricsFromAgent([FromRoute] int agentId,
         [FromRoute] TimeSpan fromTime, [FromRoute] TimeSpan toTime)
         {
-            _logger.LogInformation("Привет! Это наше первое сообщение в лог");
+            _logger.LogInformation($"api/metrics/cpu/agent/{agentId}/from/{fromTime}/to/{toTime}");
             return Ok();
         }
         [HttpGet("cluster/from/{fromTime}/to/{toTime}")]
         public IActionResult GetMetricsFromAllCluster([FromRoute] TimeSpan
         fromTime, [FromRoute] TimeSpan toTime)
         {
-            _logger.LogInformation("Привет! Это наше второе сообщение в лог");
+            _logger.LogInformation($"api/metrics/cpu/cluster/from/{fromTime}/to/{toTime}");
             return Ok();
         }
     }
