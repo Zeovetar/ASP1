@@ -17,6 +17,7 @@ namespace MetricsAgent
         // This method gets called by the runtime. Use this method to addservices to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddMvc().AddNewtonsoftJson();
             services.AddControllers();
             ConfigureSqlLiteConnection(services);
             services.AddScoped<ICpuMetricsRepository, CpuMetricsRepository>();
