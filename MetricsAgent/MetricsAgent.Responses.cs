@@ -2,11 +2,11 @@ using System;
 using System.Collections.Generic;
 namespace MetricsAgent.Responses
 {
-    public class AllCpuMetricsResponse
+    public class AllMetricsResponse
     {
-        public List<CpuMetricDto> Metrics { get; set; }
+        public List<MetricDto> Metrics { get; set; }
     }
-    public class CpuMetricDto
+    public class MetricDto
     {
         public TimeSpan Time { get; set; }
         public int Value { get; set; }

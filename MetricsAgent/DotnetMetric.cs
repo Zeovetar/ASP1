@@ -1,6 +1,6 @@
 using System;
 
-public class Metric
+public class DotnetMetric
 {
     public int Id { get; set; }
     public int Value { get; set; }

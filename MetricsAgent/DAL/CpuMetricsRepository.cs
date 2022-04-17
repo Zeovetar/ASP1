@@ -7,14 +7,14 @@ namespace MetricsAgent.DAL
 {
     // Маркировочный интерфейс
     // используется, чтобы проверять работу репозитория на тесте-заглушке
-    public interface ICpuMetricsRepository : IRepository<CpuMetric>
+    public interface ICpuMetricsRepository : IRepository<Metric>
     {
     }
     public class CpuMetricsRepository : ICpuMetricsRepository
     {
         private const string ConnectionString = "DataSource=metrics.db;Version=3;Pooling=true;Max Pool Size=100;";
 // Инжектируем соединение с базой данных в наш репозиторий черезконструктор
-    public void Create(CpuMetric item)
+    public void Create(Metric item)
         {
             using var connection = new SQLiteConnection(ConnectionString);
             connection.Open();
@@ -43,7 +43,7 @@ cmd.Parameters.AddWithValue("@time", item.Time.TotalSeconds);
             cmd.Prepare();
             cmd.ExecuteNonQuery();
         }
-        public void Update(CpuMetric item)
+        public void Update(Metric item)
         {
             using var connection = new SQLiteConnection(ConnectionString);
             using var cmd = new SQLiteCommand(connection);
@@ -55,21 +55,21 @@ cmd.Parameters.AddWithValue("@time", item.Time.TotalSeconds);
             cmd.Prepare();
             cmd.ExecuteNonQuery();
         }
-        public IList<CpuMetric> GetAll()
+        public IList<Metric> GetAll()
         {
             using var connection = new SQLiteConnection(ConnectionString);
             connection.Open();
             using var cmd = new SQLiteCommand(connection);
             // Прописываем в команду SQL-запрос на получение всех данных изтаблицы
         cmd.CommandText = "SELECT * FROM cpumetrics";
-            var returnList = new List<CpuMetric>();
+            var returnList = new List<Metric>();
             using (SQLiteDataReader reader = cmd.ExecuteReader())
             {
                 // Пока есть что читать — читаем
                 while (reader.Read())
                 {
                     // Добавляем объект в список возврата
-                    returnList.Add(new CpuMetric
+                    returnList.Add(new Metric
                     {
                         Id = reader.GetInt32(0),
                         Value = reader.GetInt32(1),
@@ -80,7 +80,7 @@ cmd.Parameters.AddWithValue("@time", item.Time.TotalSeconds);
             }
             return returnList;
         }
-        public CpuMetric GetById(int id)
+        public Metric GetById(int id)
         {
             using var connection = new SQLiteConnection(ConnectionString);
             connection.Open();
@@ -92,7 +92,7 @@ cmd.Parameters.AddWithValue("@time", item.Time.TotalSeconds);
                 if (reader.Read())
                 {
                     // возвращаем прочитанное
-                    return new CpuMetric
+                    return new Metric
                     {
                         Id = reader.GetInt32(0),
                         Value = reader.GetInt32(1),
