@@ -47,7 +47,7 @@ namespace MetricsAgent
                 command.ExecuteNonQuery();
                 command.CommandText = "DROP TABLE IF EXISTS networkmetrics";
                 command.ExecuteNonQuery();
-                command.CommandText = "DROP TABLE IF EXISTS dornetmetrics";
+                command.CommandText = "DROP TABLE IF EXISTS dotnetmetrics";
                 command.ExecuteNonQuery();
 
                 command.CommandText = @"CREATE TABLE cpumetrics(id INTEGER

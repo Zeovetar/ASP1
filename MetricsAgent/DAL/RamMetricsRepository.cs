@@ -105,5 +105,31 @@ namespace MetricsAgent.DAL
                 }
             }
         }
+        public IList<Metric> GetByTimeToTime(TimeSpan from, TimeSpan to)
+        {
+            using var connection = new SQLiteConnection(ConnectionString);
+            connection.Open();
+            var returnList = new List<Metric>();
+            using var cmd = new SQLiteCommand(connection);
+            cmd.CommandText = "SELECT * FROM rammetrics WHERE (time >= @from and time <= @to)";
+            cmd.Parameters.AddWithValue("@from", from.TotalSeconds);
+            cmd.Parameters.AddWithValue("@to", to.TotalSeconds);
+            using (SQLiteDataReader reader = cmd.ExecuteReader())
+            {
+                while (reader.Read())
+                {
+                    // Добавляем объект в список возврата
+                    returnList.Add(new Metric
+                    {
+                        Id = reader.GetInt32(0),
+                        Value = reader.GetInt32(1),
+                        // Налету преобразуем прочитанные секунды в меткувремени
+                        Time = TimeSpan.FromSeconds(reader.GetInt32(2))
+                    });
+                }
+            }
+            return returnList;
+        }
     }
 }
+

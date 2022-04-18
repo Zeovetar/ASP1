@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 
 namespace MetricsAgent.DAL
@@ -5,6 +6,7 @@ namespace MetricsAgent.DAL
     public interface IRepository<T> where T : class
     {
         IList<T> GetAll();
+        IList<T> GetByTimeToTime(TimeSpan by, TimeSpan to);
         T GetById(int id);
         void Create(T item);
         void Update(T item);
