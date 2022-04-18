@@ -14,14 +14,10 @@ namespace MetricsAgent.Controllers
     {
         private readonly ILogger<RamMetricsController> _logger;
 
-        public RamMetricsController(ILogger<RamMetricsController> logger)
+        private IRamMetricsRepository repository;
+        public RamMetricsController(IRamMetricsRepository repository, ILogger<RamMetricsController> logger)
         {
             _logger = logger;
-        }
-
-        private IRamMetricsRepository repository;
-        public RamMetricsController(IRamMetricsRepository repository)
-        {
             this.repository = repository;
         }
         [HttpPost("create")]

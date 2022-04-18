@@ -14,14 +14,10 @@ namespace MetricsAgent.Controllers
     {
         private readonly ILogger<NetworkMetricsController> _logger;
 
-        public NetworkMetricsController(ILogger<NetworkMetricsController> logger)
+        private INetworkMetricsRepository repository;
+        public NetworkMetricsController(INetworkMetricsRepository repository, ILogger<NetworkMetricsController> logger)
         {
             _logger = logger;
-        }
-
-        private ICpuMetricsRepository repository;
-        public NetworkMetricsController(INetworkMetricsRepository repository)
-        {
             this.repository = repository;
         }
         [HttpPost("create")]

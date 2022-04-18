@@ -33,18 +33,18 @@ namespace MetricsAgent.Controllers
         public IActionResult TryToInsertAndRead()
         {
             // Создаём строку подключения в виде базы данных в оперативнойпамяти
-string connectionString = "Data Source=:memory:";
+            string connectionString = "Data Source=:memory:";
             // Создаём соединение с базой данных
             using (var connection = new SQLiteConnection(connectionString))
             {
                 // Открываем соединение
                 connection.Open();
                 // Создаём объект, через который будут выполняться команды кбазе данных
-using (var command = new SQLiteCommand(connection))
+                using (var command = new SQLiteCommand(connection))
                 {
                     // Задаём новый текст команды для выполнения
                     // Удаляем таблицу с метриками, если она есть в базеданных
-command.CommandText = "DROP TABLE IF EXISTS cpumetrics";
+                    command.CommandText = "DROP TABLE IF EXISTS cpumetrics";
                     // Отправляем запрос в базу данных
                     command.ExecuteNonQuery();
                     // Создаём таблицу с метриками
@@ -54,18 +54,18 @@ value INT, time INT)";
                     command.ExecuteNonQuery();
                     // Создаём запрос на вставку данных
                     command.CommandText = "INSERT INTO cpumetrics(value, time)VALUES(10, 1)";
-command.ExecuteNonQuery();
+                    command.ExecuteNonQuery();
                     command.CommandText = "INSERT INTO cpumetrics(value, time)VALUES(50, 2)";
-command.ExecuteNonQuery();
+                    command.ExecuteNonQuery();
                     command.CommandText = "INSERT INTO cpumetrics(value, time)VALUES(75, 4)";
-command.ExecuteNonQuery();
+                    command.ExecuteNonQuery();
                     command.CommandText = "INSERT INTO cpumetrics(value, time)VALUES(90, 5)";
-command.ExecuteNonQuery();
+                    command.ExecuteNonQuery();
                     // Создаём строку для выборки данных из базы
                     // LIMIT 3 обозначает, что мы достанем только 3 записи
                     string readQuery = "SELECT * FROM cpumetrics LIMIT 3";
                     // Создаём массив, в который запишем объекты с данными избазы данных
-var returnArray = new CpuMetric[3];
+                    var returnArray = new CpuMetric[3];
                     // Изменяем текст команды на наш запрос чтения
                     command.CommandText = readQuery;
                     // Создаём читалку из базы данных
@@ -74,14 +74,14 @@ var returnArray = new CpuMetric[3];
                         // Счётчик, чтобы записать объект в правильное место вмассиве
                         var counter = 0;
                         // Цикл будет выполняться до тех пор, пока есть чточитать из базы данных
-                    while (reader.Read())
+                        while (reader.Read())
                         {
                             // Создаём объект и записываем его в массив
                             returnArray[counter] = new CpuMetric
                             {
                                 Id = reader.GetInt32(0), // Читаем данные,полученные из базы данных
-                            Value = reader.GetInt32(1), // преобразуя кцелочисленному типу
-                            Time = reader.GetInt64(2)
+                                Value = reader.GetInt32(1), // преобразуя кцелочисленному типу
+                                Time = reader.GetInt64(2)
                             };
                             // Увеличиваем значение счётчика
                             counter++;
@@ -93,6 +93,61 @@ var returnArray = new CpuMetric[3];
                 }
             }
         }
+        [HttpGet("sql-create-table")]
+        public IActionResult TryToCreate()
+        {
+            // Создаём строку подключения в виде базы данных в оперативнойпамяти
+            string connectionString = "Data Source=:memory:";
+            // Создаём соединение с базой данных
+            using (var connection = new SQLiteConnection(connectionString))
+            {
+                // Открываем соединение
+                connection.Open();
+                // Создаём объект, через который будут выполняться команды кбазе данных
+                using (var command = new SQLiteCommand(connection))
+                {
+                    // Задаём новый текст команды для выполнения
+                    // Удаляем таблицу с метриками, если она есть в базеданных
+                    command.CommandText = "DROP TABLE IF EXISTS cpumetrics";
+                    // Отправляем запрос в базу данных
+                    command.ExecuteNonQuery();
+                    command.CommandText = "DROP TABLE IF EXISTS rammetrics";
+                    // Отправляем запрос в базу данных
+                    command.ExecuteNonQuery();
+                    command.CommandText = "DROP TABLE IF EXISTS dotnetmetrics";
+                    // Отправляем запрос в базу данных
+                    command.ExecuteNonQuery();
+                    command.CommandText = "DROP TABLE IF EXISTS hddmetrics";
+                    // Отправляем запрос в базу данных
+                    command.ExecuteNonQuery();
+                    command.CommandText = "DROP TABLE IF EXISTS networkmetrics";
+                    // Отправляем запрос в базу данных
+                    command.ExecuteNonQuery();
+                    // Создаём таблицу с метриками
+                    command.CommandText = @"CREATE TABLE cpumetrics(id INTEGER
+PRIMARY KEY,
+value INT, time INT)";
+                    command.ExecuteNonQuery();
+                    command.CommandText = @"CREATE TABLE rammetrics(id INTEGER
+PRIMARY KEY,
+value INT, time INT)";
+                    command.ExecuteNonQuery();
+                    command.CommandText = @"CREATE TABLE hddmetrics(id INTEGER
+PRIMARY KEY,
+value INT, time INT)";
+                    command.ExecuteNonQuery();
+                    command.CommandText = @"CREATE TABLE networkmetrics(id INTEGER
+PRIMARY KEY,
+value INT, time INT)";
+                    command.ExecuteNonQuery();
+                    command.CommandText = @"CREATE TABLE dotnetmetrics(id INTEGER
+PRIMARY KEY,
+value INT, time INT)";
+                    command.ExecuteNonQuery();
 
+                }
+                return Ok();
+            }
+        }
     }
 }

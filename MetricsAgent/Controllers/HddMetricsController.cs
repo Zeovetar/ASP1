@@ -14,14 +14,10 @@ namespace MetricsAgent.Controllers
     {
         private readonly ILogger<HddMetricsController> _logger;
 
-        public HddMetricsController(ILogger<HddMetricsController> logger)
+        private IHddMetricsRepository repository;
+        public HddMetricsController(IHddMetricsRepository repository, ILogger<HddMetricsController> logger)
         {
             _logger = logger;
-        }
-
-        private ICpuMetricsRepository repository;
-        public HddMetricsController(IHddMetricsRepository repository)
-        {
             this.repository = repository;
         }
         [HttpPost("create")]

@@ -14,14 +14,10 @@ namespace MetricsAgent.Controllers
     {
         private readonly ILogger<DotnetMetricsController> _logger;
 
-        public DotnetMetricsController(ILogger<DotnetMetricsController> logger)
+        private IDotnetMetricsRepository repository;
+        public DotnetMetricsController(IDotnetMetricsRepository repository, ILogger<DotnetMetricsController> logger)
         {
             _logger = logger;
-        }
-
-        private ICpuMetricsRepository repository;
-        public DotnetMetricsController(IDotnetMetricsRepository repository)
-        {
             this.repository = repository;
         }
         [HttpPost("create")]

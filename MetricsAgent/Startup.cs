@@ -21,6 +21,10 @@ namespace MetricsAgent
             services.AddControllers();
             ConfigureSqlLiteConnection(services);
             services.AddScoped<ICpuMetricsRepository, CpuMetricsRepository>();
+            services.AddScoped<IDotnetMetricsRepository, DotnetMetricsRepository>();
+            services.AddScoped<IRamMetricsRepository, RamMetricsRepository>();
+            services.AddScoped<IHddMetricsRepository, HddMetricsRepository>();
+            services.AddScoped<INetworkMetricsRepository, NetworkMetricsRepository>();
         }
         private void ConfigureSqlLiteConnection(IServiceCollection services)
         {
@@ -36,9 +40,33 @@ namespace MetricsAgent
                 // Задаём новый текст команды для выполнения
                 // Удаляем таблицу с метриками, если она есть в базе данных
                 command.CommandText = "DROP TABLE IF EXISTS cpumetrics";
-                // Отправляем запрос в базу данных
                 command.ExecuteNonQuery();
+                command.CommandText = "DROP TABLE IF EXISTS rammetrics";
+                command.ExecuteNonQuery();
+                command.CommandText = "DROP TABLE IF EXISTS hddmetrics";
+                command.ExecuteNonQuery();
+                command.CommandText = "DROP TABLE IF EXISTS networkmetrics";
+                command.ExecuteNonQuery();
+                command.CommandText = "DROP TABLE IF EXISTS dornetmetrics";
+                command.ExecuteNonQuery();
+
                 command.CommandText = @"CREATE TABLE cpumetrics(id INTEGER
+PRIMARY KEY,
+value INT, time INT)";
+                command.ExecuteNonQuery();
+                command.CommandText = @"CREATE TABLE dotnetmetrics(id INTEGER
+PRIMARY KEY,
+value INT, time INT)";
+                command.ExecuteNonQuery();
+                command.CommandText = @"CREATE TABLE rammetrics(id INTEGER
+PRIMARY KEY,
+value INT, time INT)";
+                command.ExecuteNonQuery();
+                command.CommandText = @"CREATE TABLE hddmetrics(id INTEGER
+PRIMARY KEY,
+value INT, time INT)";
+                command.ExecuteNonQuery();
+                command.CommandText = @"CREATE TABLE networkmetrics(id INTEGER
 PRIMARY KEY,
 value INT, time INT)";
                 command.ExecuteNonQuery();
