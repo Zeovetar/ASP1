@@ -7,14 +7,14 @@ namespace MetricsAgent.DAL
 {
     // Маркировочный интерфейс
     // используется, чтобы проверять работу репозитория на тесте-заглушке
-    public interface ICpuMetricsRepository : IRepository<Metric>
+    public interface ICpuMetricsRepository : IRepository<CpuMetric>
     {
     }
     public class CpuMetricsRepository : ICpuMetricsRepository
     {
         private const string ConnectionString = "DataSource=metrics.db;Version=3;Pooling=true;Max Pool Size=100;";
 // Инжектируем соединение с базой данных в наш репозиторий черезконструктор
-    public void Create(Metric item)
+    public void Create(CpuMetric item)
         {
             using var connection = new SQLiteConnection(ConnectionString);
             connection.Open();
@@ -43,7 +43,7 @@ cmd.Parameters.AddWithValue("@time", item.Time.TotalSeconds);
             cmd.Prepare();
             cmd.ExecuteNonQuery();
         }
-        public void Update(Metric item)
+        public void Update(CpuMetric item)
         {
             using var connection = new SQLiteConnection(ConnectionString);
             using var cmd = new SQLiteCommand(connection);
@@ -55,21 +55,21 @@ cmd.Parameters.AddWithValue("@time", item.Time.TotalSeconds);
             cmd.Prepare();
             cmd.ExecuteNonQuery();
         }
-        public IList<Metric> GetAll()
+        public IList<CpuMetric> GetAll()
         {
             using var connection = new SQLiteConnection(ConnectionString);
             connection.Open();
             using var cmd = new SQLiteCommand(connection);
             // Прописываем в команду SQL-запрос на получение всех данных изтаблицы
         cmd.CommandText = "SELECT * FROM cpumetrics";
-            var returnList = new List<Metric>();
+            var returnList = new List<CpuMetric>();
             using (SQLiteDataReader reader = cmd.ExecuteReader())
             {
                 // Пока есть что читать — читаем
                 while (reader.Read())
                 {
                     // Добавляем объект в список возврата
-                    returnList.Add(new Metric
+                    returnList.Add(new CpuMetric
                     {
                         Id = reader.GetInt32(0),
                         Value = reader.GetInt32(1),
@@ -80,7 +80,7 @@ cmd.Parameters.AddWithValue("@time", item.Time.TotalSeconds);
             }
             return returnList;
         }
-        public Metric GetById(int id)
+        public CpuMetric GetById(int id)
         {
             using var connection = new SQLiteConnection(ConnectionString);
             connection.Open();
@@ -92,7 +92,7 @@ cmd.Parameters.AddWithValue("@time", item.Time.TotalSeconds);
                 if (reader.Read())
                 {
                     // возвращаем прочитанное
-                    return new Metric
+                    return new CpuMetric
                     {
                         Id = reader.GetInt32(0),
                         Value = reader.GetInt32(1),
@@ -106,11 +106,11 @@ cmd.Parameters.AddWithValue("@time", item.Time.TotalSeconds);
                 }
             }
         }
-        public IList<Metric> GetByTimeToTime(TimeSpan from, TimeSpan to)
+        public IList<CpuMetric> GetByTimeToTime(TimeSpan from, TimeSpan to)
         {
             using var connection = new SQLiteConnection(ConnectionString);
             connection.Open();
-            var returnList = new List<Metric>();
+            var returnList = new List<CpuMetric>();
             using var cmd = new SQLiteCommand(connection);
             cmd.CommandText = "SELECT * FROM rammetrics WHERE (time >= @from and time <= @to)";
             cmd.Parameters.AddWithValue("@from", from.TotalSeconds);
@@ -120,7 +120,7 @@ cmd.Parameters.AddWithValue("@time", item.Time.TotalSeconds);
                 while (reader.Read())
                 {
                     // Добавляем объект в список возврата
-                    returnList.Add(new Metric
+                    returnList.Add(new CpuMetric
                     {
                         Id = reader.GetInt32(0),
                         Value = reader.GetInt32(1),

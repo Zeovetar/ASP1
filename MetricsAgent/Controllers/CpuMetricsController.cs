@@ -16,6 +16,7 @@ namespace MetricsAgent.Controllers
         private readonly ILogger<CpuMetricsController> _logger;
 
         private ICpuMetricsRepository repository;
+
         public CpuMetricsController(ICpuMetricsRepository repository, ILogger<CpuMetricsController> logger)
         {
             _logger = logger;
@@ -24,7 +25,7 @@ namespace MetricsAgent.Controllers
         [HttpPost("create")]
         public IActionResult Create([FromBody] MetricCreateRequest request)
         {
-            repository.Create(new Metric
+            repository.Create(new CpuMetric
             {
                 Time = request.Time,
                 Value = request.Value

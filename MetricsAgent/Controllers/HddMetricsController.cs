@@ -24,7 +24,7 @@ namespace MetricsAgent.Controllers
         [HttpPost("create")]
         public IActionResult Create([FromBody] MetricCreateRequest request)
         {
-            repository.Create(new Metric
+            repository.Create(new HddMetric
             {
                 Time = request.Time,
                 Value = request.Value

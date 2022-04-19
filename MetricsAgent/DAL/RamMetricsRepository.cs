@@ -6,14 +6,14 @@ namespace MetricsAgent.DAL
 {
     // Маркировочный интерфейс
     // используется, чтобы проверять работу репозитория на тесте-заглушке
-    public interface IRamMetricsRepository : IRepository<Metric>
+    public interface IRamMetricsRepository : IRepository<RamMetric>
     {
     }
     public class RamMetricsRepository : IRamMetricsRepository
     {
         private const string ConnectionString = "DataSource=metrics.db;Version=3;Pooling=true;Max Pool Size=100;";
         // Инжектируем соединение с базой данных в наш репозиторий черезконструктор
-        public void Create(Metric item)
+        public void Create(RamMetric item)
         {
             using var connection = new SQLiteConnection(ConnectionString);
             connection.Open();
@@ -42,7 +42,7 @@ namespace MetricsAgent.DAL
             cmd.Prepare();
             cmd.ExecuteNonQuery();
         }
-        public void Update(Metric item)
+        public void Update(RamMetric item)
         {
             using var connection = new SQLiteConnection(ConnectionString);
             using var cmd = new SQLiteCommand(connection);
@@ -54,21 +54,21 @@ namespace MetricsAgent.DAL
             cmd.Prepare();
             cmd.ExecuteNonQuery();
         }
-        public IList<Metric> GetAll()
+        public IList<RamMetric> GetAll()
         {
             using var connection = new SQLiteConnection(ConnectionString);
             connection.Open();
             using var cmd = new SQLiteCommand(connection);
             // Прописываем в команду SQL-запрос на получение всех данных изтаблицы
             cmd.CommandText = "SELECT * FROM rammetrics";
-            var returnList = new List<Metric>();
+            var returnList = new List<RamMetric>();
             using (SQLiteDataReader reader = cmd.ExecuteReader())
             {
                 // Пока есть что читать — читаем
                 while (reader.Read())
                 {
                     // Добавляем объект в список возврата
-                    returnList.Add(new Metric
+                    returnList.Add(new RamMetric
                     {
                         Id = reader.GetInt32(0),
                         Value = reader.GetInt32(1),
@@ -79,7 +79,7 @@ namespace MetricsAgent.DAL
             }
             return returnList;
         }
-        public Metric GetById(int id)
+        public RamMetric GetById(int id)
         {
             using var connection = new SQLiteConnection(ConnectionString);
             connection.Open();
@@ -91,7 +91,7 @@ namespace MetricsAgent.DAL
                 if (reader.Read())
                 {
                     // возвращаем прочитанное
-                    return new Metric
+                    return new RamMetric
                     {
                         Id = reader.GetInt32(0),
                         Value = reader.GetInt32(1),
@@ -105,11 +105,11 @@ namespace MetricsAgent.DAL
                 }
             }
         }
-        public IList<Metric> GetByTimeToTime(TimeSpan from, TimeSpan to)
+        public IList<RamMetric> GetByTimeToTime(TimeSpan from, TimeSpan to)
         {
             using var connection = new SQLiteConnection(ConnectionString);
             connection.Open();
-            var returnList = new List<Metric>();
+            var returnList = new List<RamMetric>();
             using var cmd = new SQLiteCommand(connection);
             cmd.CommandText = "SELECT * FROM rammetrics WHERE (time >= @from and time <= @to)";
             cmd.Parameters.AddWithValue("@from", from.TotalSeconds);
@@ -119,7 +119,7 @@ namespace MetricsAgent.DAL
                 while (reader.Read())
                 {
                     // Добавляем объект в список возврата
-                    returnList.Add(new Metric
+                    returnList.Add(new RamMetric
                     {
                         Id = reader.GetInt32(0),
                         Value = reader.GetInt32(1),
