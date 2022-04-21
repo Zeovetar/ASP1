@@ -11,6 +11,7 @@ namespace MetricsAgent.DAL
     public interface ICpuMetricsRepository : IRepository<CpuMetric>
     {
     }
+
     public class CpuMetricsRepository : ICpuMetricsRepository
     {
 
@@ -19,8 +20,8 @@ namespace MetricsAgent.DAL
             SqlMapper.AddTypeHandler(new TimeSpanHandler());
         }
         private const string ConnectionString = "DataSource=metrics.db;Version=3;Pooling=true;Max Pool Size=100;";
-// Инжектируем соединение с базой данных в наш репозиторий черезконструктор
-    public void Create(CpuMetric item)
+         // Инжектируем соединение с базой данных в наш репозиторий черезконструктор
+        public void Create(CpuMetric item)
         {
             using (var connection = new SQLiteConnection(ConnectionString))
             {
@@ -72,15 +73,15 @@ namespace MetricsAgent.DAL
                     new { id = id });
             }
         }
-        }
+
         public IList<CpuMetric> GetByTimeToTime(TimeSpan from, TimeSpan to)
         {
-        var timeFrom = from.TotalSeconds;
-        var timeTo = to.TotalSeconds;
-        using (var connection = new SQLiteConnection(ConnectionString))
-        {
-            return connection.Query<CpuMetric>("SELECT Id, Time, Value FROM cpumetrics WHERE (time >= @timeFrom and time <= @timeTo)").ToList();
-        }
+            var timeFrom = from.TotalSeconds;
+            var timeTo = to.TotalSeconds;
+            using (var connection = new SQLiteConnection(ConnectionString))
+            {
+                return connection.Query<CpuMetric>("SELECT Id, Time, Value FROM cpumetrics WHERE (time >= @timeFrom and time <= @timeTo)").ToList();
+            }
         }
     }
 }
