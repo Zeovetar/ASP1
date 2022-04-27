@@ -1,5 +1,5 @@
 using MetricsAgent.DAL;
-//using MetricsAgent.Models;
+using MetricsAgent.Models;
 using MetricsAgent.Requests;
 using MetricsAgent.Responses;
 using Microsoft.AspNetCore.Mvc;

@@ -1,4 +1,5 @@
-﻿using MetricsAgent.DAL;
+﻿using AutoMapper;
+using MetricsAgent.DAL;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -17,6 +18,11 @@ namespace MetricsAgent
         // This method gets called by the runtime. Use this method to addservices to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            var mapperConfiguration = new MapperConfiguration(mp => mp.AddProfile(new MapperProfile()));
+            var mapper = mapperConfiguration.CreateMapper();
+            services.AddSingleton(mapper);
+
+            services.AddTransient<INotifier, Notifier1>();
             services.AddMvc().AddNewtonsoftJson();
             services.AddControllers();
             ConfigureSqlLiteConnection(services);
