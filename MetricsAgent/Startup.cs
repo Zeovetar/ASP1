@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Dapper;
 using MetricsAgent.DAL;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -15,6 +16,7 @@ namespace MetricsAgent
             Configuration = configuration;
         }
         public IConfiguration Configuration { get; }
+        private const string ConnectionString = "DataSource=metrics.db;Version=3;Pooling=true;Max Pool Size=100;";
         // This method gets called by the runtime. Use this method to addservices to the container.
         public void ConfigureServices(IServiceCollection services)
         {
@@ -25,7 +27,7 @@ namespace MetricsAgent
             services.AddTransient<INotifier, Notifier1>();
             services.AddMvc().AddNewtonsoftJson();
             services.AddControllers();
-            ConfigureSqlLiteConnection(services);
+            //ConfigureSqlLiteConnection(services);
             services.AddScoped<ICpuMetricsRepository, CpuMetricsRepository>();
             services.AddScoped<IDotnetMetricsRepository, DotnetMetricsRepository>();
             services.AddScoped<IRamMetricsRepository, RamMetricsRepository>();
@@ -34,51 +36,32 @@ namespace MetricsAgent
         }
         private void ConfigureSqlLiteConnection(IServiceCollection services)
         {
-            const string connectionString = "DataSource = metrics.db; Version = 3; Pooling = true; Max Pool Size = 100; ";
-            var connection = new SQLiteConnection(connectionString);
-            connection.Open();
-            PrepareSchema(connection);
+            /*const string ConnectionString = "DataSource = metrics.db; Version = 3; Pooling = true; Max Pool Size = 100; ";
+            var connection = new SQLiteConnection(ConnectionString);
+            connection.Open();*/
+            PrepareSchema();
         }
-        private void PrepareSchema(SQLiteConnection connection)
+        private void PrepareSchema()
         {
-            using (var command = new SQLiteCommand(connection))
+            using (var connection = new SQLiteConnection(ConnectionString))
             {
-                // Задаём новый текст команды для выполнения
-                // Удаляем таблицу с метриками, если она есть в базе данных
-                command.CommandText = "DROP TABLE IF EXISTS cpumetrics";
-                command.ExecuteNonQuery();
-                command.CommandText = "DROP TABLE IF EXISTS rammetrics";
-                command.ExecuteNonQuery();
-                command.CommandText = "DROP TABLE IF EXISTS hddmetrics";
-                command.ExecuteNonQuery();
-                command.CommandText = "DROP TABLE IF EXISTS networkmetrics";
-                command.ExecuteNonQuery();
-                command.CommandText = "DROP TABLE IF EXISTS dotnetmetrics";
-                command.ExecuteNonQuery();
-
-                command.CommandText = @"CREATE TABLE cpumetrics(id INTEGER
-PRIMARY KEY,
-value INT, time INT)";
-                command.ExecuteNonQuery();
-                command.CommandText = @"CREATE TABLE dotnetmetrics(id INTEGER
-PRIMARY KEY,
-value INT, time INT)";
-                command.ExecuteNonQuery();
-                command.CommandText = @"CREATE TABLE rammetrics(id INTEGER
-PRIMARY KEY,
-value INT, time INT)";
-                command.ExecuteNonQuery();
-                command.CommandText = @"CREATE TABLE hddmetrics(id INTEGER
-PRIMARY KEY,
-value INT, time INT)";
-                command.ExecuteNonQuery();
-                command.CommandText = @"CREATE TABLE networkmetrics(id INTEGER
-PRIMARY KEY,
-value INT, time INT)";
-                command.ExecuteNonQuery();
+                connection.Execute("DROP TABLE IF EXISTS cpumetrics");
+                connection.Execute("DROP TABLE IF EXISTS rammetrics");
+                connection.Execute("DROP TABLE IF EXISTS hddmetrics");
+                connection.Execute("DROP TABLE IF EXISTS networkmetrics");
+                connection.Execute("DROP TABLE IF EXISTS dotnetmetrics");
+                connection.Execute("CREATE TABLE cpumetrics(id INTEGER PRIMARY KEY, " +
+                    "value INT, time REAL)");
+                connection.Execute("CREATE TABLE rammetrics(id INTEGER PRIMARY KEY, " +
+                    "value INT, time REAL)");
+                connection.Execute("CREATE TABLE hddmetrics(id INTEGER PRIMARY KEY, " +
+                    "value INT, time REAL)");
+                connection.Execute("CREATE TABLE networkmetrics(id INTEGER PRIMARY KEY, " +
+                    "value INT, time REAL)");
+                connection.Execute("CREATE TABLE dotnetmetrics(id INTEGER PRIMARY KEY, " +
+                    "value INT, time REAL)");
             }
         }
-
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

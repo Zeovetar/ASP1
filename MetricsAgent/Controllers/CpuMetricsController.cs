@@ -55,7 +55,7 @@ namespace MetricsAgent.Controllers
 
         }
 
-        [HttpGet("/fromtime/{FromTime}/totime/{ToTime}")]
+        [HttpGet("fromtime/{FromTime}/totime/{ToTime}")]
         public IActionResult GetByTimeToTime([FromRoute] TimeSpan FromTime, [FromRoute] TimeSpan ToTime)
         {
             var config = new MapperConfiguration(cfg => cfg.CreateMap<CpuMetric, MetricDto>());

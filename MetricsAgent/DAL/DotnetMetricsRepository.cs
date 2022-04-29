@@ -81,7 +81,8 @@ namespace MetricsAgent.DAL
             var timeTo = to.TotalSeconds;
             using (var connection = new SQLiteConnection(ConnectionString))
             {
-                return connection.Query<DotnetMetric>("SELECT Id, Time, Value FROM cpumetrics WHERE (time >= @timeFrom and time <= @timeTo)").ToList();
+                return connection.Query<DotnetMetric>("SELECT Id, Time, Value FROM cpumetrics WHERE (time >= @timeFrom and time <= @timeTo)", 
+                    new { timeFrom = timeFrom, timeTo = timeTo }).ToList();
             }
         }
     }
